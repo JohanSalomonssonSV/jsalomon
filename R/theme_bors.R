@@ -15,7 +15,8 @@ theme_bors<- function(base_size=2.5) {
       panel.grid.minor = element_line(color = "#333333", size = 0.15),
       axis.text = element_text(color = "#e0e0e0"),
       line = element_line(color = "#e0e0e0"),
-      axis.ticks = element_line(color = "#e0e0e0"),
+      #axis.ticks = element_line(color = "#e0e0e0"),
+      axis.ticks = element_blank(),
       
       title = element_text(color = "white"),
       plot.title = element_text(color = "white")
