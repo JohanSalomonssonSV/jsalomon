@@ -1,14 +1,14 @@
-#' fetch_branches
+#' fetch_instruments
 #' @importFrom httr GET content
 #' @importFrom jsonlite fromJSON
 #' @param key API key
 #' @export
-#' @return x Table connection
+#' @return df data frame
 
-fetch_branches<-function(key=key){
-  getdata<-httr::GET(url=paste0("https://apiservice.borsdata.se/v1/branches?authKey=", key))
+fetch_instruments<-function(key=key){
+  getdata<-httr::GET(url=paste0("https://apiservice.borsdata.se/v1/instruments?authKey=", key))
   data_json <- httr::content(getdata, type="text", encoding = "UTF-8")
   df <- jsonlite::fromJSON(data_json,)
-  df<-df$branches
+  df <- df$instruments
   return(df)
 }
