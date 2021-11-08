@@ -13,4 +13,8 @@ Imports:
     httr,
     jsonlite,
     dplyr,
-    magrittr
+    magrittr,
+    ggplot2,
+    lubridate,
+    tibble,
+    data.table
