@@ -4,10 +4,12 @@
 \alias{fetch_multiple_stock}
 \title{fetch_multiple_stock}
 \usage{
-fetch_multiple_stock(df)
+fetch_multiple_stock(df, since)
 }
 \arguments{
 \item{df}{a subset of companies}
+
+\item{since}{since when}
 }
 \value{
 df data frame
