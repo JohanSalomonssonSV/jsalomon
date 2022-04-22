@@ -7,7 +7,7 @@
 #' @return kurs data frame
 
 fetch_1week_return_for_all<-function(key=Sys.getenv("BORSDATA_KEY")){
-  url <- paste0("https://apiservice.borsdata.se/v1/instruments/kpis/151/1month/return?authKey=",key)
+  url <- paste0("https://apiservice.borsdata.se/v1/instruments/kpis/151/1week/return?authKey=",key)
   getdata<-httr::GET(url)
   data_json <- httr::content(getdata, type="text", encoding = "UTF-8")
   df_all <- jsonlite::fromJSON(data_json,)
