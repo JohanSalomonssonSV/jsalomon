@@ -2,6 +2,7 @@
 
 export(fetch_branches)
 export(fetch_countries)
+export(fetch_date_price_for_all)
 export(fetch_instruments)
 export(fetch_markets)
 export(fetch_multiple_stock)
