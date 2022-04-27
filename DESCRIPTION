@@ -17,4 +17,5 @@ Imports:
     ggplot2,
     lubridate,
     tibble,
-    data.table
+    data.table,
+    roll
