@@ -4,12 +4,14 @@
 \alias{ADR_function}
 \title{ADR_function}
 \usage{
-ADR_function(high = "high", low = "low")
+ADR_function(high = "high", low = "low", days = 20)
 }
 \arguments{
 \item{high}{high}
 
 \item{low}{low}
+
+\item{days}{days}
 }
 \value{
 ADR
