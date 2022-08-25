@@ -18,4 +18,11 @@ Imports:
     lubridate,
     tibble,
     data.table,
-    roll
+    roll,
+    tidyquant,
+    geomtextpath,
+    patchwork,
+    utils,
+    purrr,
+    grDevices,
+    stats
