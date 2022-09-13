@@ -1,4 +1,4 @@
-#' ADR_function
+#' plot_stock
 #' @param ticker ticker
 #' @param plot_h lookback period in days
 #' @importFrom tidyquant tq_get geom_candlestick
@@ -32,7 +32,8 @@ df1 <- tq_get(ticker, from = start) %>%
          sma200= roll::roll_mean(close, width = 200),
          sma_vol_10=roll::roll_mean(volume, width = 10),
          sma_vol_20=roll::roll_mean(volume, width = 20),
-         sma_vol_50=roll::roll_mean(volume, width = 50)
+         sma_vol_50=roll::roll_mean(volume, width = 50)#,
+         #adr=jsalomon::ADR_function(high,low)
   ) %>%
   dplyr::select(symbol,date,open,high,low,close,volume, dplyr::starts_with("sma"))
 
