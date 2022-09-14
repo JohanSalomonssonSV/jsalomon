@@ -112,7 +112,7 @@ plot_stock2<-function(ticker, plot_h=350){
     ggplot2::geom_hline(aes(yintercept=ifelse(date==max(date), close,NA)), color="cyan",lty=3)+
     ggplot2::geom_line(data=t,
                        aes(lubridate::ymd(date),close, group=pred),
-                       color="white",size=0.7)+
+                       color="grey70",size=0.2)+
     geomtextpath::geom_textline(aes(y=sma10, label="10"),
                                 size = 3, color = "pink",hjust = 0.2)+
     geomtextpath::geom_textline(aes(y=sma20, label="20"),
