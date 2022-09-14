@@ -94,7 +94,7 @@ plot_stock2<-function(ticker, plot_h=350){
     z
   }
   
-  if (nrow(high_trendlines)>1){ 
+  if (nrow(high_trendlines)>=1){ 
     t<-lapply(1:nrow(high_trendlines),function(x) pred_mat(x,df1, high_trendlines))
     t<-data.table::rbindlist(t) |> tibble()}
   if (nrow(high_trendlines)<1) {
@@ -112,7 +112,7 @@ plot_stock2<-function(ticker, plot_h=350){
     ggplot2::geom_hline(aes(yintercept=ifelse(date==max(date), close,NA)), color="cyan",lty=3)+
     ggplot2::geom_line(data=t,
                        aes(lubridate::ymd(date),close, group=pred),
-                       color="white")+
+                       color="white",size=0.7)+
     geomtextpath::geom_textline(aes(y=sma10, label="10"),
                                 size = 3, color = "pink",hjust = 0.2)+
     geomtextpath::geom_textline(aes(y=sma20, label="20"),
@@ -125,7 +125,7 @@ plot_stock2<-function(ticker, plot_h=350){
                                 size = 3, color = "red",hjust = 0.2)+
     scale_y_continuous(limits = c(min(dd$close)*0.9,max(dd$close)*1.1))+
     bdscale::scale_x_bd(business.dates=dd$date, max.major.breaks=10, labels=scales::date_format("%b\n'%y"))+
-    labs(title = paste(ticker,", adr: ",round(adr,1)), y = "Price", x = "") +
+    labs(title = paste0(ticker,", adr: ",round(adr,1)), y = "Price", x = "") +
     
     jsalomon::theme_bors()
   
@@ -136,7 +136,7 @@ plot_stock2<-function(ticker, plot_h=350){
     ggplot2::scale_fill_identity()+
     ggplot2::scale_color_identity()+
     bdscale::scale_x_bd(business.dates=dd$date, max.major.breaks=10, labels=scales::date_format("%b\n'%y"))+
-    labs(x="", caption = paste("Price data courtesy of Yahoo! Finance. Accessed ",Sys.Date(),".",sep=""))+
+    labs(x="", caption = paste("Data: Yahoo! Finance. Accessed ",Sys.Date(),".",sep=""))+
     jsalomon::theme_bors()+
     theme(legend.position = "none",
           axis.text.y = element_blank()
