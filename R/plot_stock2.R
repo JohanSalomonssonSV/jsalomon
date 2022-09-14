@@ -101,6 +101,57 @@ plot_stock2<-function(ticker, plot_h=350){
     t<-tibble(date=lubridate::ymd(max(df1$date)), close=as.numeric(NA), pred=as.numeric(NA))
   }
   
+  
+  ## HERE ##
+  
+  support_line<-function(data){
+    data<- data |> mutate(rn=row_number())
+    last_close<- data |> filter(date==max(date)) |> pull(close)
+    lows <- data[grDevices::chull(data[c("rn", "low")]),] %>%
+      dplyr::filter(date<max(date))%>%
+      filter(date<max(date))
+    
+    
+    all_lowcombos <- dplyr::bind_cols(as.data.frame(t(utils::combn(lows$rn,m=2,simplify=TRUE))),as.data.frame(t(combn(lows$low,m=2,simplify=TRUE))))
+    colnames(all_lowcombos) <- c("X1","X2","Y1","Y2")
+    
+    n <- seq(1:nrow(all_lowcombos))
+    low_trendfinder <- function(n,all_lowcombos){
+      model <- lm(c(all_lowcombos$Y1[n],all_lowcombos$Y2[n])~c(all_lowcombos$X1[n],all_lowcombos$X2[n]))
+      data.frame(intercept = model$coefficients[1],slope = model$coefficients[2])
+    }
+    low_trendlines <- purrr::map_dfr(n,low_trendfinder,all_lowcombos = all_lowcombos)
+    
+    low_trendline_test <- function(x,y,data){
+      !any(x*as.numeric(data$rn) + y > data$low + 0.01) #& !(x*as.numeric(Sys.Date())+y < 0.5*data$close[nrow(data)])
+    }
+    none_below <- map2(.x = low_trendlines$slope,.y = low_trendlines$intercept,.f = low_trendline_test,data = data)
+    none_below <- unlist(none_below)
+    low_trendlines <- low_trendlines[none_below,]
+    
+    low_trendlines<-tibble(low_trendlines)  |>
+      mutate(pred=intercept+ slope*as.numeric(max(data$rn)+1),
+             last_close=last_close,
+             break_out=ifelse(last_close<pred, "Breakdown", "Not")
+      ) |>
+      arrange(-slope) 
+    
+    low_trendlines
+  }
+  
+  low_trendlines<-support_line(df1)
+  
+  low_trendlines<-dplyr::filter(low_trendlines,slope>=0)
+  
+  if (nrow(low_trendlines)>=1){ 
+    l<-lapply(1:nrow(low_trendlines),function(x) pred_mat(x,df1, low_trendlines))
+    l<-data.table::rbindlist(l) |> tibble()}
+  if (nrow(low_trendlines)<1) {
+    l<-tibble(date=lubridate::ymd(max(df1$date)), close=as.numeric(NA), pred=as.numeric(NA))
+  }
+  
+  ######  END Supportline
+  
   dd<-dplyr::filter(df1, date>=lubridate::today()-plot_h) 
   adr<-dd |> dplyr::filter(date==max(date)) |> dplyr::pull(adr)
   p<-  dd |>  ggplot2::ggplot(aes(x = date, y = close)) +
@@ -113,6 +164,10 @@ plot_stock2<-function(ticker, plot_h=350){
     ggplot2::geom_line(data=t,
                        aes(lubridate::ymd(date),close, group=pred),
                        color="grey70",size=0.2)+
+    ggplot2::geom_line(data=l,
+                       aes(lubridate::ymd(date),close, group=pred),
+                       color="yellow",
+                       size=0.2)+
     geomtextpath::geom_textline(aes(y=sma10, label="10"),
                                 size = 3, color = "pink",hjust = 0.2)+
     geomtextpath::geom_textline(aes(y=sma20, label="20"),
