@@ -2,7 +2,7 @@
 #' @param ticker ticker
 #' @param plot_h lookback period in days
 #' @importFrom tidyquant tq_get geom_candlestick
-#' @importFrom ggplot2 ggplot geom_abline geom_col labs theme_minimal geom_line scale_fill_identity scale_color_identity aes
+#' @importFrom ggplot2 ggplot geom_abline geom_col geom_label labs theme_minimal geom_line scale_fill_identity scale_color_identity aes
 #' @importFrom geomtextpath geom_textline
 #' @importFrom lubridate today
 #' @importFrom dplyr mutate select filter lag
@@ -160,7 +160,7 @@ plot_stock2<-function(ticker, plot_h=350){
                                 colour_down = "purple" ,
                                 fill_up   = "cyan"  ,
                                 fill_down = "purple" ) +
-    ggplot2::geom_hline(aes(yintercept=ifelse(date==max(date), close,NA)), color="cyan",lty=3)+
+    ggplot2::geom_hline(aes(yintercept=ifelse(date==max(date), close,NA)), color="cyan",lty=5,size=0.2)+
     ggplot2::geom_line(data=t,
                        aes(lubridate::ymd(date),close, group=pred),
                        color="grey70",size=0.2)+
@@ -178,6 +178,16 @@ plot_stock2<-function(ticker, plot_h=350){
                                 size = 3, color = "blue",hjust = 0.2)+
     geomtextpath::geom_textline(aes(y=sma200, label="200"),
                                 size = 3, color = "red",hjust = 0.2)+
+    ggplot2::geom_label(data=filter(dd,date==max(date)),
+                        aes(label=round(close,2),
+                            #y=close, 
+                            x=min(dd$date) 
+                        ),
+                        #hjust=-.1,
+                        fill="black",
+                        size=2.5,
+                        color="cyan"
+    )+
     scale_y_continuous(limits = c(min(dd$close)*0.9,max(dd$close)*1.1))+
     bdscale::scale_x_bd(business.dates=dd$date, max.major.breaks=10, labels=scales::date_format("%b\n'%y"))+
     labs(title = paste0(ticker,", adr: ",round(adr,1)), y = "Price", x = "") +
@@ -201,9 +211,11 @@ plot_stock2<-function(ticker, plot_h=350){
 AAAA
 AAAA
 AAAA
+AAAA
+AAAA
+AAAA
 BBBB
 "
   p<-patchwork::wrap_plots(p,v, design = layout) 
   p
-  
 }
