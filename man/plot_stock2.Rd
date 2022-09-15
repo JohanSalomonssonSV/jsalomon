@@ -4,12 +4,14 @@
 \alias{plot_stock2}
 \title{plot_stock2}
 \usage{
-plot_stock2(ticker, plot_h = 350)
+plot_stock2(ticker, plot_h = 350, zoom_days = 30)
 }
 \arguments{
 \item{ticker}{ticker}
 
 \item{plot_h}{lookback period in days}
+
+\item{zoom_days}{zoom days}
 }
 \value{
 p
