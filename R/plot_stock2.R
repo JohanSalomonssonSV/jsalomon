@@ -22,7 +22,7 @@
 
 
 
-plot_stock2<-function(ticker, plot_h=350, zoom_days=30){
+plot_stock2<-function(ticker, plot_h=350, zoom_days=40){
   # ticker<-"APRN"
   ticker <- ticker
   start <- lubridate::today()-365*2
@@ -192,14 +192,18 @@ plot_stock2<-function(ticker, plot_h=350, zoom_days=30){
     scale_y_continuous(limits = c(min(dd$close)*0.9,max(dd$close)*1.1))+
     bdscale::scale_x_bd(business.dates=dd$date, max.major.breaks=10, labels=scales::date_format("%b\n'%y"))+
     labs(title = paste(ticker,", adr: ",round(adr,1)),y=NULL, x = "") +
-    jsalomon::theme_bors()
+    jsalomon::theme_bors()+
+    theme(axis.text.x=element_blank(),
+          axis.title.x =element_blank())
   
   pz<-p+coord_cartesian(xlim = c(max(dd$date)-zoom_days, max(dd$date)),
                         ylim = c( dplyr::filter(dd,date>=max(dd$date)-zoom_days) |> dplyr::summarize(min_low=min(low)*0.95 ) |> dplyr::pull(min_low),
                                   dplyr::filter(dd,date>=max(dd$date)-zoom_days) |> dplyr::summarize(max_high=max(high)*1.05 ) |> dplyr::pull(max_high) )
                         
   )+
-    labs(title =NULL,subtitle =  paste0("Recent days"), x=NULL, y=NULL)
+    labs(title =NULL,subtitle =  paste0("Recent days"), x=NULL, y=NULL)+
+    theme(axis.text.x=element_blank(),
+          axis.title.x =element_blank())
   
   
   v<-dd |>  ggplot2::ggplot(aes(x = date, y = volume))+
@@ -208,16 +212,20 @@ plot_stock2<-function(ticker, plot_h=350, zoom_days=30){
     ggplot2::scale_fill_identity()+
     ggplot2::scale_color_identity()+
     bdscale::scale_x_bd(business.dates=dd$date, max.major.breaks=10, labels=scales::date_format("%b\n'%y"))+
-    labs(x="",y=NULL, caption = paste("Data: Yahoo! Finance. Accessed ",Sys.Date(),".",sep=""))+
+    labs(x="",y=NULL#, caption = paste("Data: Yahoo! Finance. Accessed ",Sys.Date(),".",sep="")
+         )+
     jsalomon::theme_bors()+
     theme(legend.position = "none",
-          axis.text.y = element_blank()
+          axis.text.y = element_blank(),
+          axis.title.x =element_blank()
     )
   vz<- v+coord_cartesian(xlim = c(max(dd$date)-zoom_days, max(dd$date)),
                          ylim = c( dplyr::filter(dd,date>=max(dd$date)-zoom_days) |> dplyr::summarize(min_vol=min(volume)*0.95 ) |> dplyr::pull(min_vol),
                                    dplyr::filter(dd,date>=max(dd$date)-zoom_days) |> dplyr::summarize(max_vol=max(volume)*1.05 ) |> dplyr::pull(max_vol) )
   )+
-    labs(title = NULL, x=NULL, y=NULL)
+    labs(title = NULL, x=NULL, y=NULL)+
+    theme(axis.text.x=element_blank(),
+          axis.title.x =element_blank() )
   
   
   layout <- "
