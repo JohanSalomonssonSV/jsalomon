@@ -223,7 +223,7 @@ plot_stock2<-function(ticker, plot_h=350, zoom_days=40){
                          ylim = c( dplyr::filter(dd,date>=max(dd$date)-zoom_days) |> dplyr::summarize(min_vol=min(volume)*0.95 ) |> dplyr::pull(min_vol),
                                    dplyr::filter(dd,date>=max(dd$date)-zoom_days) |> dplyr::summarize(max_vol=max(volume)*1.05 ) |> dplyr::pull(max_vol) )
   )+
-    labs(title = NULL, x=NULL, y=NULL)+
+    labs(title = NULL, x=NULL, y=NULL,caption = paste("@salojoh | Data: Yahoo! Finance. Accessed ",Sys.Date(),".",sep=""))+
     theme(axis.text.x=element_blank(),
           axis.title.x =element_blank() )
   
@@ -234,6 +234,9 @@ AAAAAACC
 AAAAAACC
 BBBBBBDD
 "
-  p<-patchwork::wrap_plots(p,v,pz,vz, design = layout) 
+  p<-patchwork::wrap_plots(p,v,pz,vz, 
+                           design = layout )
   p
+  #patchwork::plot_annotation(p,theme(text = element_text('mono')))
 }
+
