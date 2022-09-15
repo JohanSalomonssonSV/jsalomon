@@ -5,7 +5,7 @@
 #' @importFrom ggplot2 ggplot geom_abline geom_col geom_label labs theme_minimal geom_line scale_fill_identity scale_color_identity aes
 #' @importFrom geomtextpath geom_textline
 #' @importFrom lubridate today
-#' @importFrom dplyr mutate select filter lag
+#' @importFrom dplyr mutate select filter lag pull summarize
 #' @importFrom patchwork wrap_plots
 #' @importFrom utils combn
 #' @importFrom stats lm
@@ -81,7 +81,7 @@ plot_stock2<-function(ticker, plot_h=350){
   
   high_trendlines<-resistance_line(df1)
   high_trendlines<-dplyr::filter(high_trendlines,slope<=0,
-                                 last_close*1.1>=pred
+                                 last_close*1.2>=pred
   )
   df1<-df1 |> dplyr::mutate(rn=row_number())
   
@@ -190,32 +190,41 @@ plot_stock2<-function(ticker, plot_h=350){
     )+
     scale_y_continuous(limits = c(min(dd$close)*0.9,max(dd$close)*1.1))+
     bdscale::scale_x_bd(business.dates=dd$date, max.major.breaks=10, labels=scales::date_format("%b\n'%y"))+
-    labs(title = paste0(ticker,", adr: ",round(adr,1)), y = "Price", x = "") +
-    
+    labs(title = paste(ticker,", adr: ",round(adr,1)),y=NULL, x = "") +
     jsalomon::theme_bors()
+  
+  pz<-p+coord_cartesian(xlim = c(max(dd$date)-30, max(dd$date)),
+                        ylim = c( filter(dd,date>=max(dd$date)-30) |> summarize(min_low=min(low)*0.95 ) |> pull(min_low),
+                                  filter(dd,date>=max(dd$date)-30) |> summarize(max_high=max(high)*1.05 ) |> pull(max_high) )
+                        
+  )+
+    labs(title =NULL,subtitle =  "Recent days", x=NULL, y=NULL)
   
   
   v<-dd |>  ggplot2::ggplot(aes(x = date, y = volume))+
     ggplot2::geom_col(aes(fill=ifelse(close>dplyr::lag(close), "green", "red")))+
-    ggplot2::geom_line(aes(y=sma_vol_50,group=1, color=ifelse(sma_vol_50>dplyr::lag(sma_vol_50), "cyan", "orange")))+
+    ggplot2::geom_line(aes(y=sma_vol_50,group=1, color=ifelse(sma_vol_50>dplyr::lag(sma_vol_50), "blue", "orange")))+
     ggplot2::scale_fill_identity()+
     ggplot2::scale_color_identity()+
     bdscale::scale_x_bd(business.dates=dd$date, max.major.breaks=10, labels=scales::date_format("%b\n'%y"))+
-    labs(x="", caption = paste("Data: Yahoo! Finance. Accessed ",Sys.Date(),".",sep=""))+
+    labs(x="",y=NULL, caption = paste("Data: Yahoo! Finance. Accessed ",Sys.Date(),".",sep=""))+
     jsalomon::theme_bors()+
     theme(legend.position = "none",
           axis.text.y = element_blank()
     )
+  vz<- v+coord_cartesian(xlim = c(max(dd$date)-30, max(dd$date)),
+                         ylim = c( dplyr::filter(dd,date>=max(dd$date)-30) |> dplyr::summarize(min_vol=min(volume)*0.95 ) |> dplyr::pull(min_vol),
+                                   dplyr::filter(dd,date>=max(dd$date)-30) |> dplyr::summarize(max_vol=max(volume)*1.05 ) |> dplyr::pull(max_vol) )
+  )+
+    labs(title = NULL, x=NULL, y=NULL)
+  
   
   layout <- "
-AAAA
-AAAA
-AAAA
-AAAA
-AAAA
-AAAA
-BBBB
+AAAAAACC
+AAAAAACC
+AAAAAACC
+BBBBBBDD
 "
-  p<-patchwork::wrap_plots(p,v, design = layout) 
+  p<-patchwork::wrap_plots(p,v,pz,vz, design = layout) 
   p
 }
