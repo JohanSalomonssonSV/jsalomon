@@ -155,6 +155,9 @@ plot_stock2<-function(ticker, plot_h=350, zoom_days=40){
   
   dd<-dplyr::filter(df1, date>=lubridate::today()-plot_h) 
   adr<-dd |> dplyr::filter(date==max(date)) |> dplyr::pull(adr)
+  max_date<-max(dd$date)
+  limit_date<-dd$date[nrow(dd)-zoom_days]
+  
   p<-  dd |>  ggplot2::ggplot(aes(x = date, y = close)) +
     tidyquant::geom_candlestick(aes(open = open, high = high, low = low, close = close),
                                 colour_up   = "cyan"  ,
@@ -196,13 +199,16 @@ plot_stock2<-function(ticker, plot_h=350, zoom_days=40){
     theme(axis.text.x=element_blank(),
           axis.title.x =element_blank())
   
-  pz<-p+coord_cartesian(xlim = c(max(dd$date)-zoom_days, max(dd$date)),
-                        ylim = c( dplyr::filter(dd,date>=max(dd$date)-zoom_days) |> dplyr::summarize(min_low=min(low)*0.95 ) |> dplyr::pull(min_low),
-                                  dplyr::filter(dd,date>=max(dd$date)-zoom_days) |> dplyr::summarize(max_high=max(high)*1.05 ) |> dplyr::pull(max_high) )
-                        
+  
+  
+  pz<-p+ggplot2::coord_cartesian(xlim = c(limit_date,max_date
+                                          ),
+                        ylim = c( dplyr::filter(dd,date>=limit_date) |> dplyr::summarize(min_low=min(low)*0.95 ) |> dplyr::pull(min_low),
+                                  dplyr::filter(dd,date>=limit_date) |> dplyr::summarize(max_high=max(high)*1.05 ) |> dplyr::pull(max_high) )
+
   )+
     labs(title =NULL,subtitle =  paste0("Recent days"), x=NULL, y=NULL)+
-    theme(axis.text.x=element_blank(),
+    theme(#axis.text.x=element_blank(),
           axis.title.x =element_blank())
   
   
@@ -219,9 +225,9 @@ plot_stock2<-function(ticker, plot_h=350, zoom_days=40){
           axis.text.y = element_blank(),
           axis.title.x =element_blank()
     )
-  vz<- v+coord_cartesian(xlim = c(max(dd$date)-zoom_days, max(dd$date)),
-                         ylim = c( dplyr::filter(dd,date>=max(dd$date)-zoom_days) |> dplyr::summarize(min_vol=min(volume)*0.95 ) |> dplyr::pull(min_vol),
-                                   dplyr::filter(dd,date>=max(dd$date)-zoom_days) |> dplyr::summarize(max_vol=max(volume)*1.05 ) |> dplyr::pull(max_vol) )
+  vz<- v+coord_cartesian(xlim = c(limit_date,max_date),
+                         ylim = c( dplyr::filter(dd,date>=limit_date) |> dplyr::summarize(min_vol=min(volume)*0.95 ) |> dplyr::pull(min_vol),
+                                   dplyr::filter(dd,date>=limit_date) |> dplyr::summarize(max_vol=max(volume)*1.05 ) |> dplyr::pull(max_vol) )
   )+
     labs(title = NULL, x=NULL, y=NULL,caption = paste("@salojoh | Data: Yahoo! Finance. Accessed ",Sys.Date(),".",sep=""))+
     theme(axis.text.x=element_blank(),
