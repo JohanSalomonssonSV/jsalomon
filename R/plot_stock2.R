@@ -22,8 +22,8 @@
 
 
 
-plot_stock2<-function(ticker, plot_h=350, zoom_days=40){
-  # ticker<-"APRN"
+plot_stock2<-function(ticker, plot_h=500, zoom_days=55){
+  # ticker<-"FTCH"
   ticker <- ticker
   start <- lubridate::today()-365*2
   df1 <- tidyquant::tq_get(ticker, from = start) %>%
@@ -60,6 +60,11 @@ plot_stock2<-function(ticker, plot_h=350, zoom_days=40){
     
     high_trendlines <- map_dfr(n,high_trendatainder,all_highcombos = all_highcombos)
     
+    high_trendlines<-high_trendlines |> bind_cols(all_highcombos |> 
+                                                    mutate(first=ifelse(X1<X2, X1,X2)) |> 
+                                                    select(first)
+    )
+    
     high_trendline_test <- function(x,y,data){
       !any(x*as.numeric(max(data$rn))+y < 0.95*data$close[nrow(data)]) & y>=0
     }
@@ -81,25 +86,43 @@ plot_stock2<-function(ticker, plot_h=350, zoom_days=40){
   
   
   high_trendlines<-resistance_line(df1)
-  high_trendlines<-dplyr::filter(high_trendlines,slope<=0,
-                                 last_close*1.2>=pred
+  high_trendlines<-dplyr::filter(high_trendlines,slope<=0#,
+                                 #last_close*1.2>=pred
   )
   df1<-df1 |> dplyr::mutate(rn=row_number())
   
   
   pred_mat<-function(x,data, trend_line_data){
-    z<-bind_cols(date=paste0(lubridate::ymd(data$date)),
-                 close=trend_line_data$intercept[x]+data$rn*trend_line_data$slope[x],
-                 pred=paste0("pred_",x) )
+    type_of_predmat<-any(str_detect(names(trend_line_data),"first"))
+    #data |> arrange(desc(date)) |> head(5)
     
-    z
+    if (type_of_predmat==TRUE){
+      z<-bind_cols(date=paste0(lubridate::ymd(data$date)),
+                   close=data$close,
+                   first=data$date[data$rn==trend_line_data$first[x]],
+                   pred_value=trend_line_data$intercept[x]+data$rn*trend_line_data$slope[x],
+                   pred=paste0("pred_",x) ) |> 
+        filter(!date<first) |> 
+        mutate(close_above_pred=ifelse(any(close[date!=max(date)]>pred_value[date!=max(date)]), 1,0))
+      
+      z} 
+    else {
+      z<-bind_cols(date=paste0(lubridate::ymd(data$date)),
+                   close=data$close,
+                   pred_value=trend_line_data$intercept[x]+data$rn*trend_line_data$slope[x],
+                   pred=paste0("pred_",x) ) 
+      
+      z
+    }
   }
   
   if (nrow(high_trendlines)>=1){ 
     t<-lapply(1:nrow(high_trendlines),function(x) pred_mat(x,df1, high_trendlines))
-    t<-data.table::rbindlist(t) |> tibble()}
+    t<-data.table::rbindlist(t) |> tibble()
+    t<-t |> filter(close_above_pred==0) |> select(-close_above_pred)
+    }
   if (nrow(high_trendlines)<1) {
-    t<-tibble(date=lubridate::ymd(max(df1$date)), close=as.numeric(NA), pred=as.numeric(NA))
+    t<-tibble(date=lubridate::ymd(max(df1$date)), pred_value=as.numeric(NA), pred=as.numeric(NA))
   }
   
   
@@ -148,7 +171,7 @@ plot_stock2<-function(ticker, plot_h=350, zoom_days=40){
     l<-lapply(1:nrow(low_trendlines),function(x) pred_mat(x,df1, low_trendlines))
     l<-data.table::rbindlist(l) |> tibble()}
   if (nrow(low_trendlines)<1) {
-    l<-tibble(date=lubridate::ymd(max(df1$date)), close=as.numeric(NA), pred=as.numeric(NA))
+    l<-tibble(date=lubridate::ymd(max(df1$date)), pred_value=as.numeric(NA), pred=as.numeric(NA))
   }
   
   ######  END Supportline
@@ -166,10 +189,10 @@ plot_stock2<-function(ticker, plot_h=350, zoom_days=40){
                                 fill_down = "purple" ) +
     ggplot2::geom_hline(aes(yintercept=ifelse(date==max(date), close,NA)), color="cyan",lty=5,size=0.2)+
     ggplot2::geom_line(data=t,
-                       aes(lubridate::ymd(date),close, group=pred),
+                       aes(lubridate::ymd(date),pred_value, group=pred),
                        color="grey70",size=0.2)+
     ggplot2::geom_line(data=l,
-                       aes(lubridate::ymd(date),close, group=pred),
+                       aes(lubridate::ymd(date),pred_value, group=pred),
                        color="yellow",
                        size=0.2)+
     geomtextpath::geom_textline(aes(y=sma10, label="10"),
@@ -234,6 +257,7 @@ plot_stock2<-function(ticker, plot_h=350, zoom_days=40){
           axis.title.x =element_blank() )
   
   
+
   layout <- "
 AAAAAACC
 AAAAAACC
@@ -246,3 +270,4 @@ BBBBBBDD
   #patchwork::plot_annotation(p,theme(text = element_text('mono')))
 }
 
+#plot_stock2("NOVA", plot_h=900)
