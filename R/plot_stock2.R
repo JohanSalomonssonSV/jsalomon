@@ -196,7 +196,7 @@ disp<-dd |> dplyr::filter(date==max(date)) |>
     mutate(name=ifelse(name=="Close", paste0(name,"(",date,")"), name))
   
 dp<-disp |> 
-  ggplot2::ggplot(aes(y=tick,x=name, label=paste0(name, ":\n", value), fill=name ))+
+  ggplot2::ggplot(aes(y=tick,x=name, label=paste0(name, ": ", value), fill=name ))+
   ggplot2::geom_tile()+
   ggplot2::geom_text(family ="mono", fontface="bold")+
   ggplot2::scale_fill_manual(values = c("#6dd3ce", "#c8e9a0", "#f7a278", "#a13d63"))+
