@@ -201,6 +201,7 @@ dp<-disp |>
   ggplot2::geom_text(family ="mono", fontface="bold")+
   ggplot2::scale_fill_manual(values = c("#6dd3ce", "#c8e9a0", "#f7a278", "#a13d63"))+
     jsalomon::theme_bors()+
+  labs(title = NULL, x=NULL, y=NULL,caption = paste0("@salojoh | Data: Yahoo! Finance. Accessed ",Sys.Date(),"."))+
     theme(legend.position = "none",
           #text = element_text(family="serif"),
           axis.text = element_blank(),
@@ -279,7 +280,8 @@ dp<-disp |>
                          ylim = c( dplyr::filter(dd,date>=limit_date) |> dplyr::summarize(min_vol=min(volume)*0.95 ) |> dplyr::pull(min_vol),
                                    dplyr::filter(dd,date>=limit_date) |> dplyr::summarize(max_vol=max(volume)*1.05 ) |> dplyr::pull(max_vol) )
   )+
-    labs(title = NULL, x=NULL, y=NULL,caption = paste("@salojoh | Data: Yahoo! Finance. Accessed ",Sys.Date(),".",sep=""))+
+    labs(title = NULL, x=NULL, y=NULL#,caption = paste("@salojoh | Data: Yahoo! Finance. Accessed ",Sys.Date(),".",sep="")
+         )+
     theme(axis.text.x=element_blank(),
           axis.title.x =element_blank() )
   
@@ -288,6 +290,7 @@ dp<-disp |>
   layout <- "
 AAAAAADD
 AAAAAADD  
+AAAAAADD
 AAAAAADD
 AAAAAADD
 AAAAAADD
