@@ -3,7 +3,7 @@
 #' @param plot_h lookback period in days
 #' @param zoom_days zoom days
 #' @importFrom tidyquant tq_get geom_candlestick
-#' @importFrom ggplot2 ggplot geom_abline geom_col geom_label labs theme_minimal geom_line scale_fill_identity scale_color_identity aes
+#' @importFrom ggplot2 ggplot geom_abline geom_tile geom_col geom_label labs theme_minimal geom_line scale_fill_identity scale_color_identity scale_fill_manual
 #' @importFrom geomtextpath geom_textline
 #' @importFrom lubridate today
 #' @importFrom dplyr mutate select filter lag pull summarize
@@ -39,6 +39,7 @@ plot_stock2<-function(ticker, plot_h=350, zoom_days=55){
                   sma_vol_10=roll::roll_mean(volume, width = 10),
                   sma_vol_20=roll::roll_mean(volume, width = 20),
                   sma_vol_50=roll::roll_mean(volume, width = 50),
+                  sma_vol_dollar_20=roll::roll_mean(volume*close, width=20),
                   adr=jsalomon::ADR_function(high, low)
     ) %>%
     dplyr::select(symbol,date,open,high,low,close,volume,adr, dplyr::starts_with("sma"))
@@ -181,6 +182,32 @@ plot_stock2<-function(ticker, plot_h=350, zoom_days=55){
   max_date<-max(dd$date)
   limit_date<-dd$date[nrow(dd)-zoom_days]
   
+disp<-dd |> dplyr::filter(date==max(date)) |> 
+    mutate(tick=factor(1))|> 
+    mutate(adr=as.character(round(adr,1)), 
+           close=as.character(round(close,2)),
+           sma_vol_20=paste0(round(sma_vol_20/1000000,2),"M"),
+           sma_vol_dollar_20=paste0(round(sma_vol_dollar_20/1000000,2),"M")
+           
+    ) |> 
+    select(tick,date,"Adr"=adr, "Close"=close, 
+           "Vol. avg."=sma_vol_20, "Vol.Dollar avg."=sma_vol_dollar_20) |> 
+    pivot_longer(3:6) |> 
+    mutate(name=ifelse(name=="Close", paste0(name,"(",date,")"), name))
+  
+dp<-disp |> 
+  ggplot2::ggplot(aes(y=tick,x=name, label=paste0(name, ":\n", value), fill=name ))+
+  ggplot2::geom_tile()+
+  ggplot2::geom_text(family ="mono", fontface="bold")+
+  ggplot2::scale_fill_manual(values = c("#6dd3ce", "#c8e9a0", "#f7a278", "#a13d63"))+
+    jsalomon::theme_bors()+
+    theme(legend.position = "none",
+          #text = element_text(family="serif"),
+          axis.text = element_blank(),
+          axis.title = element_blank())
+  
+  
+  
   p<-  dd |>  ggplot2::ggplot(aes(x = date, y = close)) +
     tidyquant::geom_candlestick(aes(open = open, high = high, low = low, close = close),
                                 colour_up   = "cyan"  ,
@@ -217,7 +244,7 @@ plot_stock2<-function(ticker, plot_h=350, zoom_days=55){
     )+
     scale_y_continuous(limits = c(min(dd$close)*0.9,max(dd$close)*1.1))+
     bdscale::scale_x_bd(business.dates=dd$date, max.major.breaks=10, labels=scales::date_format("%b\n'%y"))+
-    labs(title = paste(ticker,", adr: ",round(adr,1)),y=NULL, x = "") +
+    labs(title = paste(ticker),y=NULL, x = "") +
     jsalomon::theme_bors()+
     theme(axis.text.x=element_blank(),
           axis.title.x =element_blank())
@@ -259,15 +286,19 @@ plot_stock2<-function(ticker, plot_h=350, zoom_days=55){
   
 
   layout <- "
-AAAAAACC
-AAAAAACC
-AAAAAACC
-BBBBBBDD
+AAAAAADD
+AAAAAADD  
+AAAAAADD
+AAAAAADD
+AAAAAADD
+AAAAAADD
+BBBBBBEE
+BBBBBBEE
+CCCCCCCC
 "
-  p<-patchwork::wrap_plots(p,v,pz,vz, 
-                           design = layout )
+  p<-patchwork::wrap_plots(p,v,dp,pz,vz, design = layout) 
   p
   #patchwork::plot_annotation(p,theme(text = element_text('mono')))
 }
 
-#plot_stock2("NOVA", plot_h=900)
+#plot_stock2("NOVA")
