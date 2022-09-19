@@ -4,7 +4,7 @@
 \alias{plot_stock2}
 \title{plot_stock2}
 \usage{
-plot_stock2(ticker, plot_h = 500, zoom_days = 55)
+plot_stock2(ticker, plot_h = 350, zoom_days = 55)
 }
 \arguments{
 \item{ticker}{ticker}

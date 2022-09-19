@@ -22,7 +22,7 @@
 
 
 
-plot_stock2<-function(ticker, plot_h=500, zoom_days=55){
+plot_stock2<-function(ticker, plot_h=350, zoom_days=55){
   # ticker<-"FTCH"
   ticker <- ticker
   start <- lubridate::today()-365*2
