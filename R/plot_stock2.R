@@ -23,7 +23,7 @@
 
 
 plot_stock2<-function(ticker, plot_h=350, zoom_days=55){
-  # ticker<-"MAXN"
+  # ticker<-"SGML"
   ticker <- ticker
   start <- lubridate::today()-365*2
   df1 <- tidyquant::tq_get(ticker, from = start) %>%
@@ -123,7 +123,7 @@ plot_stock2<-function(ticker, plot_h=350, zoom_days=55){
     t<-t |> filter(close_above_pred==0) |> select(-close_above_pred)
     }
   if (nrow(high_trendlines)<1) {
-    t<-tibble(date=lubridate::ymd(max(df1$date)), pred_value=as.numeric(NA), pred=as.numeric(NA))
+    t<-tibble(date=lubridate::ymd(max(df1$date)),close=as.numeric(NA), pred_value=as.numeric(NA), pred=as.numeric(NA))
   }
   
   
@@ -334,4 +334,4 @@ CCCCCCCC
   #patchwork::plot_annotation(p,theme(text = element_text('mono')))
 }
 
-#plot_stock2("FULC")
+#plot_stock2("SGML")
