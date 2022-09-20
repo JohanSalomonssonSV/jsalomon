@@ -23,7 +23,7 @@
 
 
 plot_stock2<-function(ticker, plot_h=350, zoom_days=55){
-  # ticker<-"FTCH"
+  # ticker<-"MAXN"
   ticker <- ticker
   start <- lubridate::today()-365*2
   df1 <- tidyquant::tq_get(ticker, from = start) %>%
@@ -178,9 +178,14 @@ plot_stock2<-function(ticker, plot_h=350, zoom_days=55){
   ######  END Supportline
   
   dd<-dplyr::filter(df1, date>=lubridate::today()-plot_h) 
-  adr<-dd |> dplyr::filter(date==max(date)) |> dplyr::pull(adr)
+  #adr<-dd |> dplyr::filter(date==max(date)) |> dplyr::pull(adr)
   max_date<-max(dd$date)
   limit_date<-dd$date[nrow(dd)-zoom_days]
+  max_high<- max(dd$high)
+  min_low<- min(dd$low)
+  
+ BO_df<- filter(t,date==max(date) ) |> 
+    mutate(break_out=ifelse(close>pred_value, "BO",NA ))
   
 disp<-dd |> dplyr::filter(date==max(date)) |> 
     mutate(tick=factor(1))|> 
@@ -248,6 +253,24 @@ dp<-disp |>
                         size=2.5,
                         color="cyan"
     )+
+    ggplot2::geom_text(label=paste0("H: ",max_high), y=max_high, x=-Inf,
+                        hjust=-1,
+                       color="#c8e9a0",
+                       size=2.5
+                       )+
+    ggplot2::geom_text(label=paste0("L: ",min_low), y=min_low, x=-Inf,
+                       hjust=-1,
+                       color="#f7a278",
+                       size=2.5
+    )+
+      ggplot2::geom_text(
+      data = BO_df,
+      aes(label = ifelse(break_out == "BO", "B", NA)),
+      x = Inf,
+      y = max_high,
+      hjust = 2,
+      color = "yellow"
+    )+
     scale_y_continuous(limits = c(min(dd$close)*0.9,max(dd$close)*1.1),
                        sec.axis = sec_axis( trans=~.))+
     bdscale::scale_x_bd(business.dates=dd$date, max.major.breaks=10, labels=scales::date_format("%b\n'%y"))+
@@ -311,4 +334,4 @@ CCCCCCCC
   #patchwork::plot_annotation(p,theme(text = element_text('mono')))
 }
 
-#plot_stock2("NOVA")
+#plot_stock2("FULC")
