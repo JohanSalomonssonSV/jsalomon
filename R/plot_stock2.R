@@ -5,7 +5,7 @@
 #' @importFrom tidyquant tq_get geom_candlestick
 #' @importFrom ggplot2 ggplot geom_abline geom_tile geom_col geom_label labs theme_minimal geom_line scale_fill_identity scale_color_identity scale_fill_manual
 #' @importFrom geomtextpath geom_textline
-#' @importFrom lubridate today
+#' @importFrom lubridate today floor_date
 #' @importFrom dplyr mutate select filter lag pull summarize
 #' @importFrom patchwork wrap_plots
 #' @importFrom utils combn
@@ -210,6 +210,11 @@ dp<-disp |>
   
   
   p<-  dd |>  ggplot2::ggplot(aes(x = date, y = close)) +
+    ggplot2::geom_text(aes(label=ifelse(date==lubridate::floor_date(median(date)), paste0(symbol), NA), y=((max(close)-min(close))/2)+min(close)  ),
+              color="white",
+              size=26,
+              alpha=0.1
+    )+
     tidyquant::geom_candlestick(aes(open = open, high = high, low = low, close = close),
                                 colour_up   = "cyan"  ,
                                 colour_down = "purple" ,
@@ -243,9 +248,11 @@ dp<-disp |>
                         size=2.5,
                         color="cyan"
     )+
-    scale_y_continuous(limits = c(min(dd$close)*0.9,max(dd$close)*1.1))+
+    scale_y_continuous(limits = c(min(dd$close)*0.9,max(dd$close)*1.1),
+                       sec.axis = sec_axis( trans=~.))+
     bdscale::scale_x_bd(business.dates=dd$date, max.major.breaks=10, labels=scales::date_format("%b\n'%y"))+
     labs(title = paste(ticker),y=NULL, x = "") +
+    #scale_y_continuous(sec.axis = sec_axis( trans=~.))+
     jsalomon::theme_bors()+
     theme(axis.text.x=element_blank(),
           axis.title.x =element_blank())
