@@ -23,7 +23,7 @@
 
 
 plot_stock2<-function(ticker, plot_h=350, zoom_days=55){
-  # ticker<-"SGML"
+  # ticker<-"PTCT"
   ticker <- ticker
   start <- lubridate::today()-365*2
   df1 <- tidyquant::tq_get(ticker, from = start) %>%
@@ -87,7 +87,7 @@ plot_stock2<-function(ticker, plot_h=350, zoom_days=55){
   
   
   high_trendlines<-resistance_line(df1)
-  high_trendlines<-dplyr::filter(high_trendlines,slope<=0#,
+  high_trendlines<-dplyr::filter(high_trendlines,slope<=0 | (pred<=(1.05*last_close) & first>=floor(0.5*nrow(df1)) ) #,
                                  #last_close*1.2>=pred
   )
   df1<-df1 |> dplyr::mutate(rn=row_number())
@@ -334,4 +334,4 @@ CCCCCCCC
   #patchwork::plot_annotation(p,theme(text = element_text('mono')))
 }
 
-#plot_stock2("SGML")
+#plot_stock2("PTCT", 600)
