@@ -256,12 +256,12 @@ dp<-disp |>
     ggplot2::geom_text(label=paste0("H: ",max_high), y=max_high, x=-Inf,
                         hjust=-1,
                        color="#c8e9a0",
-                       size=2.5
+                       size=3
                        )+
     ggplot2::geom_text(label=paste0("L: ",min_low), y=min_low, x=-Inf,
                        hjust=-1,
                        color="#f7a278",
-                       size=2.5
+                       size=3
     )+
       ggplot2::geom_text(
       data = BO_df,
