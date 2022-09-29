@@ -23,10 +23,11 @@
 
 
 plot_stock2<-function(ticker, plot_h=350, zoom_days=55){
-  # ticker<-"PTCT"
+  # ticker<-"SOBR"
   ticker <- ticker
   start <- lubridate::today()-365*2
   df1 <- tidyquant::tq_get(ticker, from = start) %>%
+    filter(!is.na(close)) |> 
     dplyr::mutate(open = round(open,digits=2),
                   high = round(high,digits=2),
                   low = round(low,digits=2),
@@ -334,4 +335,4 @@ CCCCCCCC
   #patchwork::plot_annotation(p,theme(text = element_text('mono')))
 }
 
-#plot_stock2("PTCT", 600)
+#plot_stock2("SOBR", 600)
