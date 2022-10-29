@@ -272,7 +272,7 @@ dp<-disp |>
       hjust = 2,
       color = "yellow"
     )+
-    scale_y_continuous(limits = c(min(dd$close)*0.9,max(dd$close)*1.1),
+    scale_y_continuous(limits = c(min(dd$low)*0.9,max(dd$high)*1.1),
                        sec.axis = sec_axis( trans=~.))+
     bdscale::scale_x_bd(business.dates=dd$date, max.major.breaks=10, labels=scales::date_format("%b\n'%y"))+
     labs(title = paste(ticker),y=NULL, x = "") +
