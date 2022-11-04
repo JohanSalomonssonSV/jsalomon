@@ -7,7 +7,7 @@
 #' @return df
 getstk<-function(ticker, start_date="2015-01-01"){
   df <-ticker |>
-    tidyquant::tq_get( from = "2010-01-01", to = lubridate::today()#, periodicity = "weekly"
+    tidyquant::tq_get( from = start_date, to = lubridate::today()#, periodicity = "weekly"
     )
   
   return(df)
