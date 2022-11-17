@@ -28,4 +28,5 @@ Imports:
     stats,
     bdscale,
     scales,
-    TTR
+    TTR,
+    stringr

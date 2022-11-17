@@ -287,16 +287,6 @@ df1<-  bind_cols(df1, bb) |>
       hjust = 2,
       color = "yellow"
     )+
-    ggplot2::geom_point(aes(y=tight),shape=25, color="green"#, alpha=0.5
-                        )+
-    ggplot2::geom_segment(aes(
-      x= date,xend=date,
-      y=ifelse(!is.na(tight_gain),high*1.05,NA), 
-      yend=high*1.05*((tight_gain*1.05/100)+1))
-      ,color="green"
-      , size=0.3 )+
-    ggplot2::geom_text(aes(label=paste0(tight_gain,"%"), x=date, y=high*1.05*((tight_gain*1.05/100)+1)  )
-              ,check_overlap = T, vjust="left", color="green", size=2.5)+
     ggplot2::scale_y_continuous(limits = c(min(dd$low)*0.9,max(dd$high)*1.1),
                        sec.axis = sec_axis( trans=~.))+
     bdscale::scale_x_bd(business.dates=dd$date, max.major.breaks=10, labels=scales::date_format("%b\n'%y"))+
@@ -306,6 +296,21 @@ df1<-  bind_cols(df1, bb) |>
     theme(axis.text.x=element_blank(),
           axis.title.x =element_blank())
   
+  
+if(nrow(filter(dd, !is.na(tight)  ))>0   )  {
+  p<-p+
+    ggplot2::geom_point(aes(y=tight),shape=25, color="green"#, alpha=0.5
+    )+
+    ggplot2::geom_segment(aes(
+      x= date,xend=date,
+      y=ifelse(!is.na(tight_gain),high*1.05,NA), 
+      yend=high*1.05*((tight_gain*1.05/100)+1))
+      ,color="green"
+      , size=0.3 )+
+    ggplot2::geom_text(aes(label=paste0(tight_gain,"%"), x=date, y=high*1.05*((tight_gain*1.05/100)+1)  )
+                       ,check_overlap = T, vjust="left", color="green", size=2.5)
+  
+}
   
   
   pz<-p+ggplot2::coord_cartesian(xlim = c(limit_date,max_date
@@ -360,4 +365,4 @@ CCCCCCCC
   #patchwork::plot_annotation(p,theme(text = element_text('mono')))
 }
 
-#plot_stock3("PPLT", 350)
+#plot_stock3("ENPH", 350)
