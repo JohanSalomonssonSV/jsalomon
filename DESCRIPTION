@@ -27,4 +27,5 @@ Imports:
     grDevices,
     stats,
     bdscale,
-    scales
+    scales,
+    TTR
