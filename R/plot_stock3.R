@@ -24,7 +24,7 @@
 
 
 plot_stock3<-function(ticker, plot_h=350, zoom_days=55){
-  # ticker<-"PPLT"
+  # ticker<-"AEHR"
   ticker <- ticker
   start <- lubridate::today()-365*2
   df1 <- tidyquant::tq_get(ticker, from = start) %>%
@@ -300,7 +300,11 @@ df1<-  bind_cols(df1, bb) |>
 if(nrow(filter(dd, !is.na(tight)  ))>0   )  {
   p<-p+
     ggplot2::geom_point(aes(y=tight),shape=25, color="green"#, alpha=0.5
-    )+
+    )
+} 
+
+if(nrow(filter(dd, !is.na(tight_gain)  ))>0 ) { 
+p<-p  +
     ggplot2::geom_segment(aes(
       x= date,xend=date,
       y=ifelse(!is.na(tight_gain),high*1.05,NA), 
@@ -365,4 +369,4 @@ CCCCCCCC
   #patchwork::plot_annotation(p,theme(text = element_text('mono')))
 }
 
-#plot_stock3("ENPH", 350)
+#plot_stock3("AEHR", 350)
