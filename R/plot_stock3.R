@@ -14,7 +14,7 @@
 #' @importFrom roll roll_mean roll_quantile roll_max roll_idxmax
 #' @importFrom grDevices chull
 #' @importFrom bdscale scale_x_bd
-#' @importFrom scales date_format
+#' @importFrom scales date_format alpha
 #' @importFrom TTR BBands
 #' @export
 #' @return p
@@ -24,7 +24,7 @@
 
 
 plot_stock3<-function(ticker, plot_h=350, zoom_days=55){
-  # ticker<-"^GSPC"
+  # ticker<-"ARP.ST"
   ticker <- ticker
   start <- lubridate::today()-365*2
   df1 <- tidyquant::tq_get(ticker, from = start) %>%
@@ -252,7 +252,7 @@ df1<-
                        color="grey70",size=0.2)+
     ggplot2::geom_line(data=l,
                        aes(lubridate::ymd(date),pred_value, group=pred),
-                       color="yellow",
+                       color=scales::alpha("yellow",0.5),
                        size=0.2)+
     geomtextpath::geom_textline(aes(y=sma10, label="10"),
                                 size = 3, color = "pink",hjust = 0.2)+
@@ -310,15 +310,32 @@ if(nrow(filter(dd, !is.na(tight)  ))>0   )  {
 
 if(nrow(filter(dd, !is.na(tight_gain)  ))>0 ) { 
 p<-p  +
-    ggplot2::geom_segment(aes(
+  # ggrepel::geom_text_repel(data=filter(dd,!is.na(tight_gain)),
+  #   aes(label=paste0(tight_gain,"%\n(",days_hold,"d)"), 
+  #       x=date, 
+  #       y=tight
+  #       )
+  #   ,force_pull   = 0
+  #   ,hjust=1
+  #   ,point.padding = 0.2
+  #   ,nudge_x = -4
+  #   ,nudge_y = 5
+  #   ,segment.size      = 0.2
+  #   ,min.segment.length = 0
+  #   , size=2.1
+  #   ,segment.curvature = -0.01
+  #   , direction = "y"
+  #   ,color="green"
+  # )
+      ggplot2::geom_segment(aes(
       x= date,xend=date,
-      y=ifelse(!is.na(tight_gain),high*1.05,NA), 
+      y=ifelse(!is.na(tight_gain),high*1.05,NA),
       yend=high*1.05*((tight_gain*1.05/100)+1))
       ,color="green"
       , size=0.3 )+
     ggplot2::geom_text(aes(label=paste0(tight_gain,"%\n(",days_hold,"d)"), x=date, y=high*1.055*((tight_gain*1.055/100)+1)  )
                        ,check_overlap = T, vjust="left", color="green", size=2.1)
-  
+
 }
   
   
