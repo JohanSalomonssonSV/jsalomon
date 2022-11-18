@@ -11,7 +11,7 @@
 #' @importFrom utils combn
 #' @importFrom stats lm
 #' @importFrom purrr map_dfr map2
-#' @importFrom roll roll_mean roll_quantile roll_max
+#' @importFrom roll roll_mean roll_quantile roll_max roll_idxmax
 #' @importFrom grDevices chull
 #' @importFrom bdscale scale_x_bd
 #' @importFrom scales date_format
@@ -50,16 +50,21 @@ plot_stock3<-function(ticker, plot_h=350, zoom_days=55){
   bb<-TTR::BBands(df1[,c("high","low","close")] )
   colnames(bb)<- c("lower_bb", "sma_bb", "upper_bb", "pct_bb")
  
-df1<-  bind_cols(df1, bb) |> 
+df1<-  
+  bind_cols(df1, bb) |> 
     mutate(tight=ifelse(((upper_bb/lower_bb)-1)<=roll::roll_quantile( ((upper_bb/lower_bb)-1),width = 60,  p=0.01 )&
                           close>=sma50 &
                           sma50>lag(sma50,2)
                         #close>=sma200
                         , high*1.05, NA),
-           tight_gain=ifelse(!is.na(tight), round(((lead(roll::roll_max(close, width = 30),30)/ close)-1)*100,1),NA )
-    )
+           tight_gain=ifelse(!is.na(tight), round(((lead(roll::roll_max(close, width = 30),30)/ close)-1)*100,1),NA ),
+           days_hold=lead(roll::roll_idxmax(close, width = 30),30)
+    ) #|> select(date,date_span_end,tight, tight_gain, tight_gain_date,tight_gain_date_nr) |> filter(!is.na(tight))
   
-  
+
+
+
+
   resistance_line<-function(data){
     data<- data |> mutate(rn=row_number())
     last_close<- data |> filter(date==max(date)) |> pull(close)
@@ -311,8 +316,8 @@ p<-p  +
       yend=high*1.05*((tight_gain*1.05/100)+1))
       ,color="green"
       , size=0.3 )+
-    ggplot2::geom_text(aes(label=paste0(tight_gain,"%"), x=date, y=high*1.05*((tight_gain*1.05/100)+1)  )
-                       ,check_overlap = T, vjust="left", color="green", size=2.5)
+    ggplot2::geom_text(aes(label=paste0(tight_gain,"%\n(",days_hold,"d)"), x=date, y=high*1.055*((tight_gain*1.055/100)+1)  )
+                       ,check_overlap = T, vjust="left", color="green", size=2.1)
   
 }
   
@@ -384,4 +389,4 @@ CCCCCCCC
   #patchwork::plot_annotation(p,theme(text = element_text('mono')))
 }
 
-#plot_stock3("CPNG", 350)
+#plot_stock3("HYPRO.OL", 350)
