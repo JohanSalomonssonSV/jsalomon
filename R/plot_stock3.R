@@ -3,7 +3,7 @@
 #' @param plot_h lookback period in days
 #' @param zoom_days zoom days
 #' @importFrom tidyquant tq_get geom_candlestick
-#' @importFrom ggplot2 ggplot geom_abline geom_tile geom_col geom_label labs theme_minimal geom_line scale_fill_identity scale_color_identity geom_segment scale_fill_manual
+#' @importFrom ggplot2 ggplot geom_abline geom_tile geom_col geom_label labs theme_minimal geom_line scale_fill_identity geom_vline scale_color_identity geom_segment scale_alpha_identity scale_fill_manual
 #' @importFrom geomtextpath geom_textline
 #' @importFrom lubridate today floor_date
 #' @importFrom dplyr mutate select filter lag lead pull summarize
@@ -24,7 +24,7 @@
 
 
 plot_stock3<-function(ticker, plot_h=350, zoom_days=55){
-  # ticker<-"AEHR"
+  # ticker<-"^GSPC"
   ticker <- ticker
   start <- lubridate::today()-365*2
   df1 <- tidyquant::tq_get(ticker, from = start) %>%
@@ -329,10 +329,16 @@ p<-p  +
   
   
   v<-dd |>  ggplot2::ggplot(aes(x = date, y = volume))+
-    ggplot2::geom_col(aes(fill=ifelse(close>dplyr::lag(close), "green", "red")))+
-    ggplot2::geom_line(aes(y=sma_vol_50,group=1, color=ifelse(sma_vol_50>dplyr::lag(sma_vol_50), "blue", "orange")))+
+    # ggplot2::geom_col(aes(fill=ifelse(close>dplyr::lag(close), "green", "red")))+
+    ggplot2::geom_col(aes(fill=ifelse(close>dplyr::lag(close), "green", "red"),
+                          alpha=ifelse(volume>sma_vol_50, 0.9,0.3)
+                          ))+
+    geom_vline(aes(xintercept=date[which.min(sma_vol_50)]), color="grey80",lty=1, size=0.2)+
+    ggplot2::geom_line(aes(y=sma_vol_50,group=1, color=ifelse(sma_vol_50>dplyr::lag(sma_vol_50), "cyan", "orange")))+
+    ggplot2::scale_alpha_identity()+
     ggplot2::scale_fill_identity()+
     ggplot2::scale_color_identity()+
+    ggplot2::scale_shape_identity()+
     bdscale::scale_x_bd(business.dates=dd$date, max.major.breaks=10, labels=scales::date_format("%b\n'%y"))+
     labs(x="",y=NULL#, caption = paste("Data: Yahoo! Finance. Accessed ",Sys.Date(),".",sep="")
     )+
@@ -341,6 +347,15 @@ p<-p  +
           axis.text.y = element_blank(),
           axis.title.x =element_blank()
     )
+  
+if(nrow(filter(dd, volume>sma_vol_50*2  ))>0 ){
+  v<-v+ggplot2::geom_point(aes(y=ifelse(volume>sma_vol_50*2, volume*1.04 ,NA ),
+                          color=ifelse(close>dplyr::lag(close), "cyan", "orange"),
+                          shape=ifelse(volume>sma_vol_50*2 & volume<sma_vol_50*3, 1,20)
+  ))
+}
+  
+  
   vz<- v+coord_cartesian(xlim = c(limit_date,max_date),
                          ylim = c( dplyr::filter(dd,date>=limit_date) |> dplyr::summarize(min_vol=min(volume)*0.95 ) |> dplyr::pull(min_vol),
                                    dplyr::filter(dd,date>=limit_date) |> dplyr::summarize(max_vol=max(volume)*1.05 ) |> dplyr::pull(max_vol) )
@@ -369,4 +384,4 @@ CCCCCCCC
   #patchwork::plot_annotation(p,theme(text = element_text('mono')))
 }
 
-#plot_stock3("AEHR", 350)
+#plot_stock3("CPNG", 350)
