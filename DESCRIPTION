@@ -29,4 +29,5 @@ Imports:
     bdscale,
     scales,
     TTR,
-    stringr
+    stringr,
+    janitor
