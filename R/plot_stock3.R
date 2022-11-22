@@ -333,7 +333,7 @@ p<-p  +
       yend=high*1.05*((tight_gain*1.05/100)+1))
       ,color="green"
       , size=0.3 )+
-    ggplot2::geom_text(aes(label=paste0(tight_gain,"%\n(",days_hold,"d)"), x=date, y=high*1.055*((tight_gain*1.055/100)+1)  )
+    ggplot2::geom_text(aes(label=paste0("ADR: ",round(adr,1), "\n",tight_gain,"%\n(",days_hold,"d)"), x=date, y=high*1.055*((tight_gain*1.055/100)+1)  )
                        ,check_overlap = T, vjust="left", color="green", size=2.1)
 
 }
