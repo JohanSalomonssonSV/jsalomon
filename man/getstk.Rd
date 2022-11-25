@@ -4,12 +4,14 @@
 \alias{getstk}
 \title{getstk}
 \usage{
-getstk(ticker, start_date = "2015-01-01")
+getstk(ticker, start_date = "2015-01-01", end_date = lubridate::today())
 }
 \arguments{
 \item{ticker}{ticker}
 
 \item{start_date}{start_date}
+
+\item{end_date}{end_date}
 }
 \value{
 df
