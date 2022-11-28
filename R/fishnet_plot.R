@@ -72,7 +72,8 @@ fishnet_plot<-function(symbol="^GSPC", start_date="2021-01-01", end_date=lubrida
       ggplot2::theme(legend.position = "none",
                      panel.grid.major.x = element_blank(),
                      panel.grid.minor.x = element_blank(),
-                     axis.title.x = element_blank()
+                     axis.title.x = element_blank(),
+                     text = element_text(family = "sans")
       )
   }
   p<-plot_fishnet(start_date = start_date)  
