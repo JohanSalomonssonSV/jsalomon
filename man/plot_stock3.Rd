@@ -4,7 +4,7 @@
 \alias{plot_stock3}
 \title{plot_stock3 test}
 \usage{
-plot_stock3(ticker, plot_h = 350, zoom_days = 55)
+plot_stock3(ticker, plot_h = 350, zoom_days = 55, title_p = TRUE)
 }
 \arguments{
 \item{ticker}{ticker}
@@ -12,6 +12,8 @@ plot_stock3(ticker, plot_h = 350, zoom_days = 55)
 \item{plot_h}{lookback period in days}
 
 \item{zoom_days}{zoom days}
+
+\item{title_p}{plot titles}
 }
 \value{
 p

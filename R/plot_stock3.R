@@ -2,6 +2,7 @@
 #' @param ticker ticker
 #' @param plot_h lookback period in days
 #' @param zoom_days zoom days
+#' @param title_p plot titles
 #' @importFrom tidyquant tq_get geom_candlestick
 #' @importFrom ggplot2 ggplot geom_abline geom_tile geom_col geom_label labs theme_minimal geom_line scale_fill_identity geom_vline scale_color_identity geom_segment scale_alpha_identity scale_fill_manual
 #' @importFrom geomtextpath geom_textline
@@ -23,7 +24,7 @@
 
 
 
-plot_stock3<-function(ticker, plot_h=350, zoom_days=55){
+plot_stock3<-function(ticker, plot_h=350, zoom_days=55, title_p=TRUE){
   # ticker<-"ARP.ST"
   ticker <- ticker
   start <- lubridate::today()-365*2
@@ -300,7 +301,12 @@ df1<-
     jsalomon::theme_bors()+
     theme(axis.text.x=element_blank(),
           axis.title.x =element_blank())
+
+if(title_p==FALSE ){
+p<-p + ggplot2::theme(plot.title = element_blank())
   
+}  
+
   
 if(nrow(filter(dd, !is.na(tight)  ))>0   )  {
   p<-p+
@@ -348,7 +354,11 @@ p<-p  +
     labs(title =NULL,subtitle =  paste0("Recent days"), x=NULL, y=NULL)+
     theme(#axis.text.x=element_blank(),
       axis.title.x =element_blank())
-  
+
+if(title_p==FALSE ){
+  pz<-pz + ggplot2::theme(plot.subtitle = element_blank())
+    
+  }  
   
   v<-dd |>  ggplot2::ggplot(aes(x = date, y = volume))+
     # ggplot2::geom_col(aes(fill=ifelse(close>dplyr::lag(close), "green", "red")))+
@@ -406,4 +416,4 @@ CCCCCCCC
   #patchwork::plot_annotation(p,theme(text = element_text('mono')))
 }
 
-#plot_stock3("HYPRO.OL", 350)
+#plot_stock3("HYPRO.OL", 350, title_p=FALSE)
