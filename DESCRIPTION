@@ -30,4 +30,6 @@ Imports:
     scales,
     TTR,
     stringr,
-    janitor
+    janitor,
+    tidyr,
+    here
