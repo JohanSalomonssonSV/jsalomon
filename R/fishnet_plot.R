@@ -12,6 +12,7 @@
 #' @importFrom roll roll_mean
 #' @importFrom tidyr pivot_longer
 #' @importFrom here here
+#' @importFrom grid grid.text
 #' @export
 #' @return p
 #' 
@@ -39,11 +40,26 @@ fishnet_plot<-function(symbol="^GSPC", start_date="2021-01-01", end_date=lubrida
     df |> 
       dplyr::filter(date>=start_date) |> 
       ggplot2::ggplot(aes(date,adjusted))+
-      ggplot2::geom_text(label=str_remove(symbol,".ST"), x=-Inf, y=Inf,color="grey20",
-                         size=15,
-                         hjust="inward",
-                         vjust="inward",
-                         alpha=0.7)+
+      # ggplot2::geom_text(label=str_remove(symbol,".ST"), x=-Inf, y=Inf
+      #                    
+      #                    
+      #                    ,color="grey20",
+      #                    size=15,
+      #                    hjust="inward",
+      #                    vjust="inward",
+      #                    alpha=0.7)+
+      annotation_custom(grid::grid.text(paste0(str_remove(symbol,".ST")),
+                                       #color="grey20",
+                                       #size=15,
+                                       #alpha=0.7, 
+                                       gp=gpar(fontsize=140, col="grey20")
+                                       ), 
+                        xmin = -Inf, 
+                        xmax = Inf,
+                        ymin = -Inf, 
+                        ymax = Inf
+                        
+                        )+
       # ggplot2::geom_text(aes(label=ifelse(date==lubridate::floor_date(median(date, na.rm = T)), paste0(str_remove(symbol, ".ST")), NA), y=((max(close)-min(close))/2)+min(close)  ),
       #                    color="white",
       #                    size=20,
@@ -86,4 +102,4 @@ fishnet_plot<-function(symbol="^GSPC", start_date="2021-01-01", end_date=lubrida
 }
 
 
-#fishnet_plot(symbol = "SINCH.ST")
+#fishnet_plot(symbol = "ES=F")
