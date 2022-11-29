@@ -12,7 +12,7 @@
 #' @importFrom roll roll_mean
 #' @importFrom tidyr pivot_longer
 #' @importFrom here here
-#' @importFrom grid grid.text
+#' @importFrom grid grid.text gpar
 #' @export
 #' @return p
 #' 
@@ -52,7 +52,7 @@ fishnet_plot<-function(symbol="^GSPC", start_date="2021-01-01", end_date=lubrida
                                        #color="grey20",
                                        #size=15,
                                        #alpha=0.7, 
-                                       gp=gpar(fontsize=140, col="grey20")
+                                       gp=grid::gpar(fontsize=140, col="grey20")
                                        ), 
                         xmin = -Inf, 
                         xmax = Inf,
