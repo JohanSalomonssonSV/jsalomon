@@ -20,11 +20,11 @@
 fishnet_plot<-function(symbol="^GSPC", start_date="2021-01-01", end_date=lubridate::today(), save_plot=TRUE){
   
   df<-jsalomon::getstk(symbol, start_date = lubridate::ymd(start_date)-320, end_date = end_date)   
-  df<- df |> dplyr::filter(!is.na(adjusted))  
-  fishnet<-function(adjusted=adjusted){
+  df<- df |> dplyr::filter(!is.na(close))  
+  fishnet<-function(close=close){
     
     t<-purrr::map_dfc(c(seq(10, 200,3),200), function(x){ 
-      roll::roll_mean(adjusted,x )  
+      roll::roll_mean(close,x )  
       
     })
     t<-t |> purrr::set_names(paste0("sma",c(seq(10, 200,3),200) ))
@@ -33,13 +33,13 @@ fishnet_plot<-function(symbol="^GSPC", start_date="2021-01-01", end_date=lubrida
   
   
   plot_fishnet<-function(start_date){
-    smas<-dplyr::bind_cols(date=df$date,fishnet(df$adjusted)) |> 
-      tidyr::pivot_longer(cols = 2:66, values_to = "adjusted") |> 
+    smas<-dplyr::bind_cols(date=df$date,fishnet(df$close)) |> 
+      tidyr::pivot_longer(cols = 2:66, values_to = "close") |> 
       dplyr::filter(date>=start_date)
     
     df |> 
       dplyr::filter(date>=start_date) |> 
-      ggplot2::ggplot(aes(date,adjusted))+
+      ggplot2::ggplot(aes(date,close))+
       # ggplot2::geom_text(label=str_remove(symbol,".ST"), x=-Inf, y=Inf
       #                    
       #                    
@@ -66,7 +66,7 @@ fishnet_plot<-function(symbol="^GSPC", start_date="2021-01-01", end_date=lubrida
       #                    alpha=0.1
       # )+
       #geom_line()+
-      ggplot2::geom_line(data = smas, aes(date, adjusted, group=name#, color=ifelse(adjusted<=lag(adjusted),"grey80","red" )
+      ggplot2::geom_line(data = smas, aes(date, close, group=name#, color=ifelse(adjusted<=lag(adjusted),"grey80","red" )
       ), color="grey90", 
       size=0.1)+
       #geom_line(color="cyan")+
@@ -102,4 +102,4 @@ fishnet_plot<-function(symbol="^GSPC", start_date="2021-01-01", end_date=lubrida
 }
 
 
-#fishnet_plot(symbol = "ES=F")
+#fishnet_plot(symbol = "FNM.ST")
