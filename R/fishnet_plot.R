@@ -6,7 +6,7 @@
 #' @param label_size label_size
 #' @param show_panel show_panel T/F
 #' @importFrom tidyquant geom_candlestick
-#' @importFrom ggplot2 ggplot geom_tile geom_col geom_label labs theme_minimal geom_line scale_fill_identity geom_vline geom_hline scale_color_identity geom_segment scale_alpha_identity scale_fill_manual
+#' @importFrom ggplot2 ggplot geom_tile geom_col geom_label labs theme_minimal geom_line scale_fill_identity geom_vline geom_hline scale_color_identity geom_segment scale_alpha_identity scale_fill_manual annotation_custom
 #' @importFrom dplyr mutate select filter  
 #' @importFrom scales date_format
 #' @importFrom bdscale scale_x_bd
@@ -61,7 +61,7 @@ fishnet_plot<-function(symbol="^GSPC",
       #                    hjust="inward",
       #                    vjust="inward",
       #                    alpha=0.7)+
-      annotation_custom(grid::grid.text(paste0(str_remove(symbol,".ST")),
+      ggplot2::annotation_custom(grid::grid.text(paste0(str_remove(symbol,".ST")),
                                        #color="grey20",
                                        #size=15,
                                        #alpha=0.7, 
