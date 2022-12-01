@@ -8,7 +8,9 @@ fishnet_plot(
   symbol = "^GSPC",
   start_date = "2021-01-01",
   end_date = lubridate::today(),
-  save_plot = TRUE
+  save_plot = TRUE,
+  label_size = 180,
+  show_panel = FALSE
 )
 }
 \arguments{
@@ -19,6 +21,10 @@ fishnet_plot(
 \item{end_date}{end_date}
 
 \item{save_plot}{save_plot T/F}
+
+\item{label_size}{label_size}
+
+\item{show_panel}{show_panel T/F}
 }
 \value{
 p

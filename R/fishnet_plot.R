@@ -3,6 +3,8 @@
 #' @param start_date start_date
 #' @param end_date end_date
 #' @param save_plot save_plot T/F
+#' @param label_size label_size
+#' @param show_panel show_panel T/F
 #' @importFrom tidyquant geom_candlestick
 #' @importFrom ggplot2 ggplot geom_tile geom_col geom_label labs theme_minimal geom_line scale_fill_identity geom_vline geom_hline scale_color_identity geom_segment scale_alpha_identity scale_fill_manual
 #' @importFrom dplyr mutate select filter  
@@ -17,11 +19,19 @@
 #' @return p
 #' 
 
-fishnet_plot<-function(symbol="^GSPC", start_date="2021-01-01", end_date=lubridate::today(), save_plot=TRUE){
+fishnet_plot<-function(symbol="^GSPC", 
+                       start_date="2021-01-01", 
+                       end_date=lubridate::today(), 
+                       save_plot=TRUE, 
+                       label_size=180,
+                       show_panel=FALSE){
   
   df<-jsalomon::getstk(symbol, start_date = lubridate::ymd(start_date)-320, end_date = end_date)   
   df<- df |> dplyr::filter(!is.na(close)) |> 
-    mutate(sma_vol_50=roll::roll_mean(volume, width = 50))
+    mutate(sma_vol_50=roll::roll_mean(volume, width = 50),
+           sma_vol_dollar_20=roll::roll_mean(volume*close, width=20),
+           adr=jsalomon::ADR_function(high, low)
+           )
   fishnet<-function(close=close){
     
     t<-purrr::map_dfc(c(seq(10, 200,3),200), function(x){ 
@@ -55,7 +65,7 @@ fishnet_plot<-function(symbol="^GSPC", start_date="2021-01-01", end_date=lubrida
                                        #color="grey20",
                                        #size=15,
                                        #alpha=0.7, 
-                                       gp=grid::gpar(fontsize=180, col="grey20")
+                                       gp=grid::gpar(fontsize=label_size, col="grey20")
                                        ), 
                         xmin = -Inf, 
                         xmax = Inf,
@@ -108,6 +118,13 @@ fishnet_plot<-function(symbol="^GSPC", start_date="2021-01-01", end_date=lubrida
                      text = element_text(family = "sans")
       )
     
+if(show_panel==TRUE){
+pp<-pp +  ggplot2::geom_text(data=filter(plot_data,date==max(date)),
+                             aes(label=paste0("ADR: ",round(adr,1),"\nVP (20d): ",round(sma_vol_dollar_20/1000000,1 ),"M" ) ),
+                             x=-Inf,y=Inf, color="orange", size=2.5, hjust="left", vjust="right")
+  
+  
+}
     
     v<-
       plot_data |> #dplyr::filter(date>=start_date) |>
@@ -160,4 +177,4 @@ BBBBBB
 }
 
 
-#fishnet_plot(symbol = "FNM.ST")
+#fishnet_plot(symbol = "FNM.ST", show_panel=TRUE)
