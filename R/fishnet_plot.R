@@ -142,7 +142,7 @@ pp<-pp +  ggplot2::geom_text(data=filter(plot_data,date==max(date)),
       ggplot2::geom_hline(aes(yintercept=ifelse(date==max(date), volume,NA)), color="cyan",lty=5,size=0.1)+
       bdscale::scale_x_bd(business.dates=df$date, max.major.breaks=10, labels=scales::date_format("%b-'%y"))+
       labs(x="",y=NULL, 
-           caption = paste0("Data: Yahoo Finance, ", lubridate::today(), "\n@stops2breakeven"))+
+           caption = paste0("Data: Yahoo Finance, collected: ", lubridate::today(),", last date: ",max(plot_data$date), "\n@stops2breakeven"))+
       jsalomon::theme_bors()+
       theme(legend.position = "none",
             axis.text.y = element_blank(),
