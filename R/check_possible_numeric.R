@@ -7,7 +7,8 @@
 check_possible_numeric <- function(data) {
   check_numeric_sample <- function(x) {
     temp<-data[,x] |> pull()
-    temp<-temp[!is.na(temp)]
+    temp<-ifelse(is.na(temp), 0, temp)
+    #temp<-temp[!is.na(temp)]
     temp<-sample(temp, 20)
     
     x <- any(!is.na(as.numeric(temp )))
