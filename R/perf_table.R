@@ -8,6 +8,8 @@
 #' @return z tibble
 #' 
 perf_table<-function(country="sweden", exchange="OMXSTO"){
+  
+  
 # Big thanks to https://github.com/misrori who I borrowed most of the code from
 get_tradingview_data_from_json_string <- function(my_json_string) {
   headers = c(
