@@ -9,14 +9,15 @@
 RS_function<-function(tv_data,col=perf_ytd, industry_rank=FALSE){
   data<-tv_data |> dplyr::arrange({{col}}) |> 
     dplyr::mutate(rank_y=dplyr::row_number(),
-           RS=round((rank_y/max(rank_y)) *100),5) |> 
+           RS=round((rank_y/max(rank_y) ) *100,3)) |> 
     dplyr::select(-rank_y)
   if (industry_rank==TRUE){
     sec_rank<-data |> 
       dplyr::group_by(industry) |> 
       dplyr::summarize(ind_perf=median({{col}})) |> 
       dplyr::arrange(-ind_perf) |> 
-      dplyr::mutate(ind_rank=dplyr::row_number() )
+      dplyr::mutate(ind_rank=dplyr::row_number() ) |> 
+      select(-ind_perf)
     data<-data |> dplyr::left_join(sec_rank)
   }
   
