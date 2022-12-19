@@ -9,7 +9,7 @@
 RS_function<-function(tv_data,col=perf_ytd, industry_rank=FALSE){
   data<-tv_data |> dplyr::arrange({{col}}) |> 
     dplyr::mutate(rank_y=dplyr::row_number(),
-           RS=round((rank_y/max(rank_y) ) *100,3)) |> 
+           RS=round((rank_y/max(rank_y) ) *100,1)) |> 
     dplyr::select(-rank_y)
   if (industry_rank==TRUE){
     sec_rank<-data |> 
