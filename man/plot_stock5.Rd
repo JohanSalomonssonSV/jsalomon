@@ -4,7 +4,15 @@
 \alias{plot_stock5}
 \title{plot_stock5 test}
 \usage{
-plot_stock5(ticker, plot_h = 350, zoom_days = 55, title_p = TRUE)
+plot_stock5(
+  ticker,
+  plot_h = 400,
+  zoom_days = 55,
+  title_p = TRUE,
+  pos_col = "#1ED01E",
+  neg_col = "#DC0101",
+  tight_col = "white"
+)
 }
 \arguments{
 \item{ticker}{ticker}
@@ -14,6 +22,12 @@ plot_stock5(ticker, plot_h = 350, zoom_days = 55, title_p = TRUE)
 \item{zoom_days}{zoom days}
 
 \item{title_p}{plot titles}
+
+\item{pos_col}{col}
+
+\item{neg_col}{col}
+
+\item{tight_col}{col}
 }
 \value{
 p

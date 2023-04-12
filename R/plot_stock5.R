@@ -3,6 +3,9 @@
 #' @param plot_h lookback period in days
 #' @param zoom_days zoom days
 #' @param title_p plot titles
+#' @param pos_col col
+#' @param neg_col col
+#' @param tight_col col
 #' @importFrom tidyquant tq_get geom_candlestick
 #' @importFrom ggplot2 ggplot geom_abline geom_ribbon geom_tile geom_col geom_label labs theme_minimal geom_line scale_fill_identity geom_vline scale_color_identity geom_segment scale_alpha_identity scale_fill_manual
 #' @importFrom geomtextpath geom_textline
@@ -24,10 +27,10 @@
 
 
 
-plot_stock5<-function(ticker, plot_h=350, zoom_days=55, title_p=TRUE){
+plot_stock5<-function(ticker, plot_h=400, zoom_days=55, title_p=TRUE, pos_col="#1ED01E",neg_col="#DC0101", tight_col="white" ){
   # ticker<-"AAPL"
   ticker <- ticker
-  start <- lubridate::today()-365*2
+  start <- lubridate::today()-plot_h*3
   df1 <- tidyquant::tq_get(ticker, from = start) %>%
     filter(!is.na(close)) |> 
     dplyr::mutate(open = round(open,digits=2),
@@ -244,7 +247,7 @@ minichart<-
               color="black")+
   ggplot2::geom_line(aes(color=ifelse(sma10>=sma20 & 
                                  sma10>=lag(sma10) & 
-                                 sma20>=lag(sma20), "cyan","red"),
+                                 sma20>=lag(sma20), pos_col,neg_col),
                   group=1)#color="#d4af37"
               )+
   ggplot2::scale_color_identity()+
@@ -275,10 +278,11 @@ minichart<-
     ggplot2::geom_ribbon(aes(x = date, ymin= lower_bb, ymax = upper_bb), fill= "grey", alpha = 0.1)+
     
     tidyquant::geom_candlestick(aes(open = open, high = high, low = low, close = close),
-                                colour_up   = "cyan"  ,
-                                colour_down = "purple" ,
-                                fill_up   = "cyan"  ,
-                                fill_down = "purple" ) +
+                                colour_up   = pos_col  ,
+                                colour_down = neg_col ,
+                                #size=4,
+                                fill_up   = pos_col ,
+                                fill_down = neg_col) +
     ggplot2::geom_hline(aes(yintercept=ifelse(date==max(date), close,NA)), color="cyan",lty=5,size=0.2)+
     ggplot2::geom_line(data=t,
                        aes(lubridate::ymd(date),pred_value, group=pred),
@@ -292,7 +296,7 @@ minichart<-
     geomtextpath::geom_textline(aes(y=sma20, label="20"),
                                 size = 3, color = "grey70",hjust = 0.2)+
     geomtextpath::geom_textline(aes(y=sma50, label="50"),
-                                size = 3, color = "green",hjust = 0.2)+
+                                size = 3, color = "cyan",hjust = 0.2)+
     geomtextpath::geom_textline(aes(y=sma100, label="100"),
                                 size = 3, color = "blue",hjust = 0.2)+
     geomtextpath::geom_textline(aes(y=sma200, label="200"),
@@ -331,8 +335,6 @@ minichart<-
     )+
     ggplot2::scale_y_continuous(limits = c(min(dd$low)*0.9,max(dd$high)*1.05),
                                 sec.axis = sec_axis( trans=~.))+
-    geom_text(label= paste(ticker), x=-Inf,y=Inf, size=10, color="white",
-              vjust=1, hjust=0)+
     bdscale::scale_x_bd(business.dates=dd$date, max.major.breaks=10, labels=scales::date_format("%b-'%y"))+
     labs(title =NULL,
          y=NULL, x = NULL) +
@@ -348,12 +350,17 @@ minichart<-
   if(title_p==FALSE ){
     p<-p + ggplot2::theme(plot.title = element_blank())
     
-  }  
+  }
+  if(title_p==TRUE){
+    p<-geom_text(label= paste(ticker), x=-Inf,y=Inf, size=10, color="white",
+                  vjust=1, hjust=0)
+    
+  }
   
   
   if(nrow(filter(dd, !is.na(tight)  ))>0   )  {
     p<-p+
-      ggplot2::geom_point(aes(y=tight),shape=25, color="green"#, alpha=0.5
+      ggplot2::geom_point(aes(y=tight),shape=25, color=tight_col#, alpha=0.5
       )
   } 
   
@@ -380,10 +387,10 @@ minichart<-
       x= date,xend=date,
       y=ifelse(!is.na(tight_gain),high*1.05,NA),
       yend=high*1.05*((tight_gain*1.05/100)+1))
-      ,color="green"
-      , size=0.3 )+
+      ,color=tight_col
+      , size=0.15 )+
       ggplot2::geom_text(aes(label=paste0("ADR: ",round(adr,1), "\n",tight_gain,"%\n(",days_hold,"d)"), x=date, y=high*1.055*((tight_gain*1.055/100)+1)  )
-                         ,check_overlap = T, vjust="left", color="green", size=2.1)
+                         ,check_overlap = T, vjust="left", color=tight_col, size=2.1)
     
   }
   
@@ -406,7 +413,7 @@ minichart<-
   
   v<-dd |>  ggplot2::ggplot(aes(x = date, y = volume))+
     # ggplot2::geom_col(aes(fill=ifelse(close>dplyr::lag(close), "green", "red")))+
-    ggplot2::geom_col(aes(fill=ifelse(close>dplyr::lag(close), "green", "red"),
+    ggplot2::geom_col(aes(fill=ifelse(close>dplyr::lag(close), pos_col, neg_col),
                           alpha=ifelse(volume>sma_vol_50, 0.9,0.3)
     ))+
     geom_vline(aes(xintercept=date[which.min(sma_vol_50)]), color="grey80",lty=1, size=0.2)+
@@ -460,4 +467,4 @@ CCCCCCCC
   #patchwork::plot_annotation(p,theme(text = element_text('mono')))
 }
 
-#plot_stock5("HYPRO.OL", 350, title_p=FALSE)
+#plot_stock5("AAPL", 350, title_p=FALSE)
