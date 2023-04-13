@@ -280,7 +280,7 @@ x<-ifelse(
 
 x
 }
-coloring_ret(-10)
+#coloring_ret(-10)
 
 return_table<-df1 |> mutate(d=round( ((close/lag(close))-1)*100,2  ),
               d5=round( ((close/lag(close,5))-1)*100,2  ),
@@ -305,14 +305,7 @@ return_table<-df1 |> mutate(d=round( ((close/lag(close))-1)*100,2  ),
   labs(x=NULL,y=NULL)+
   theme_void()+
   ggplot2::theme(plot.background = element_rect(fill="#1e1e1e"))
-  #jsalomon::theme_bors()+
-  # ggplot2::theme(axis.text.x = element_blank(),
-  #                axis.text.y = element_blank(),
-  #                panel.grid.major = element_blank(),
-  #                panel.grid.minor = element_blank(),
-  #                legend.position = "none")
-  # theme_void()+
-  # jsalo
+
   
   p<-  dd |>  ggplot2::ggplot(aes(x = date, y = close)) +
     ggplot2::geom_text(aes(label=ifelse(date==lubridate::floor_date(median(date)), paste0(symbol), NA), y=((max(close)-min(close))/2)+min(close)  ),
@@ -399,7 +392,7 @@ return_table<-df1 |> mutate(d=round( ((close/lag(close))-1)*100,2  ),
     
   }
   if(title_p==TRUE){
-    p<-geom_text(label= paste(ticker), x=-Inf,y=Inf, size=10, color="white",
+    p<-p+geom_text(label= paste(ticker), x=-Inf,y=Inf, size=10, color="white",
                   vjust=1, hjust=0)
     
   }
