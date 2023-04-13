@@ -33,4 +33,7 @@ Imports:
     janitor,
     tidyr,
     here,
-    grid
+    grid,
+    ggtext,
+    glue
+    

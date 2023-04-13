@@ -20,6 +20,8 @@
 #' @importFrom bdscale scale_x_bd
 #' @importFrom scales date_format alpha
 #' @importFrom TTR BBands EMA
+#' @importFrom ggtext geom_richtext
+#' @importFrom glue glue
 #' @export
 #' @return p
 #' 
@@ -268,6 +270,49 @@ minichart<-
   ggplot2::theme(axis.text.x = element_blank(),
           axis.text.y = element_blank(),
           legend.position = "none")
+
+coloring_ret<-\(x, pc=pos_col, nc=neg_col){
+x<-ifelse(
+  x>=0, 
+  glue::glue("<span style='color:{pc}'>{x}%</span>"),
+  glue::glue("<span style='color:{nc}'>{x}%</span>")
+)
+
+x
+}
+coloring_ret(-10)
+
+return_table<-df1 |> mutate(d=round( ((close/lag(close))-1)*100,2  ),
+              d5=round( ((close/lag(close,5))-1)*100,2  ),
+              d25=round( ((close/lag(close,25))-1)*100,2  ),
+              d100=round( ((close/lag(close,100))-1)*100,2  ),
+              d250=round( ((close/lag(close,250))-1)*100,2  )
+              )  |> 
+  filter(date==max(date)) |> 
+  transmute(r=1,
+            `1 Day`=coloring_ret(d),
+         `5 Days`=coloring_ret(d5),
+         `25 Days`=coloring_ret(d25),
+         `100 Days`=coloring_ret(d100),
+         `250 Days`=coloring_ret(d250)) |> 
+  pivot_longer(cols = 2:6) |> 
+  mutate(rn=row_number(),
+    value=glue::glue("<span style='color:grey90'>{name}:</span> {value}"),
+    name=fct_reorder(name,-rn)) |> 
+  ggplot2::ggplot(aes(1, name))+
+  ggtext::geom_richtext(aes(label=value), fill=NA, color=NA,size=2.5,
+                        hjust=0.5)+
+  labs(x=NULL,y=NULL)+
+  theme_void()+
+  ggplot2::theme(plot.background = element_rect(fill="#1e1e1e"))
+  #jsalomon::theme_bors()+
+  # ggplot2::theme(axis.text.x = element_blank(),
+  #                axis.text.y = element_blank(),
+  #                panel.grid.major = element_blank(),
+  #                panel.grid.minor = element_blank(),
+  #                legend.position = "none")
+  # theme_void()+
+  # jsalo
   
   p<-  dd |>  ggplot2::ggplot(aes(x = date, y = close)) +
     ggplot2::geom_text(aes(label=ifelse(date==lubridate::floor_date(median(date)), paste0(symbol), NA), y=((max(close)-min(close))/2)+min(close)  ),
@@ -280,9 +325,11 @@ minichart<-
     tidyquant::geom_candlestick(aes(open = open, high = high, low = low, close = close),
                                 colour_up   = pos_col  ,
                                 colour_down = neg_col ,
-                                #size=4,
                                 fill_up   = pos_col ,
-                                fill_down = neg_col) +
+                                fill_down = neg_col,
+                                alpha=0.7,
+                                size=0.1
+                                ) +
     ggplot2::geom_hline(aes(yintercept=ifelse(date==max(date), close,NA)), color="cyan",lty=5,size=0.2)+
     ggplot2::geom_line(data=t,
                        aes(lubridate::ymd(date),pred_value, group=pred),
@@ -451,20 +498,24 @@ minichart<-
   
   
   layout <- "
-AAAAAADD
-AAAAAADD  
-AAAAAADD
-AAAAAADD
-AAAAAADD
-AAAAAADD
-AAAAAADD
-AAAAAAEE
-BBBBBBFF
-CCCCCCCC
+AAAAAAADDD
+AAAAAAADDD  
+AAAAAAADDD
+AAAAAAADDD
+AAAAAAADDD
+AAAAAAADDD
+AAAAAAADDD
+AAAAAAADDD
+AAAAAAADDD
+AAAAAAADDD
+AAAAAAAEEE
+AAAAAAAFFG
+BBBBBBBFFG
+CCCCCCCCCC
 "
-  pw<-patchwork::wrap_plots(p,v, dp,pz,vz,minichart, design = layout) 
+  pw<-patchwork::wrap_plots(p,v, dp,pz,vz,minichart,return_table, design = layout) 
   pw
   #patchwork::plot_annotation(p,theme(text = element_text('mono')))
 }
 
-#plot_stock5("AAPL", 350, title_p=FALSE)
+#plot_stock5("AAPL", 400, title_p=FALSE)
