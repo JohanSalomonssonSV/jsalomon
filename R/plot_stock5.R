@@ -444,7 +444,8 @@ return_table<-df1 |> mutate(d=round( ((close/lag(close))-1)*100,2  ),
     labs(title =NULL,#subtitle =  paste0("Recent days"), 
          x=NULL, y=NULL)+
     theme(#axis.text.x=element_blank(),
-      axis.title.x =element_blank())
+      axis.title.x =element_blank(),
+      plot.title = element_blank())
   
   if(title_p==FALSE ){
     pz<-pz + ggplot2::theme(plot.subtitle = element_blank())

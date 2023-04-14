@@ -53,9 +53,10 @@ perf_table_common_ETF<-function(country="america", exchange="AMEX", valueTraded=
   names(z)[3]<-"name"
   
   z<-z |>  
-    filter(str_detect(description, "SPDR|Invesco|iShares|Vanguard|VanEck" ),
+    filter(#str_detect(description, "SPDR|Invesco|iShares|Vanguard|VanEck" ),
                subtype=="etf",
-               value_traded>valueTraded) |> 
+               value_traded>valueTraded
+           ) |> 
     mutate(owner=str_extract(description, "SPDR|Invesco|iShares|Vanguard|VanEck"),
            topic=str_remove(description, owner),
            topic=str_remove(topic, " ETF")
