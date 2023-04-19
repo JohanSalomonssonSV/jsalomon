@@ -8,7 +8,7 @@ plot_stock5(
   ticker,
   plot_h = 400,
   zoom_days = 55,
-  title_p = TRUE,
+  title_p = FALSE,
   pos_col = "#1ED01E",
   neg_col = "#DC0101",
   tight_col = "white"

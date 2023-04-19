@@ -29,7 +29,7 @@
 
 
 
-plot_stock5<-function(ticker, plot_h=400, zoom_days=55, title_p=TRUE, pos_col="#1ED01E",neg_col="#DC0101", tight_col="white" ){
+plot_stock5<-function(ticker, plot_h=400, zoom_days=55, title_p=FALSE, pos_col="#1ED01E",neg_col="#DC0101", tight_col="white" ){
   # ticker<-"AAPL"
   ticker <- ticker
   start <- lubridate::today()-plot_h*3
@@ -313,14 +313,14 @@ return_table<-df1 |> mutate(d=round( ((close/lag(close))-1)*100,2  ),
                        size=26,
                        alpha=0.1
     )+
-    ggplot2::geom_ribbon(aes(x = date, ymin= lower_bb, ymax = upper_bb), fill= "grey", alpha = 0.1)+
+    ggplot2::geom_ribbon(aes(x = date, ymin= lower_bb, ymax = upper_bb),color="grey90",linewidth=0.3, lty=3, fill= "grey", alpha = 0.03)+
     
     tidyquant::geom_candlestick(aes(open = open, high = high, low = low, close = close),
                                 colour_up   = pos_col  ,
                                 colour_down = neg_col ,
                                 fill_up   = pos_col ,
                                 fill_down = neg_col,
-                                alpha=0.7,
+                                alpha=0.9,
                                 size=0.1
                                 ) +
     ggplot2::geom_hline(aes(yintercept=ifelse(date==max(date), close,NA)), color="cyan",lty=5,size=0.2)+
