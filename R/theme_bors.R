@@ -3,12 +3,14 @@
 #' @export
 #' @return A theme element
 #' @param base_size base_size
+#' @param plotbq plot background color
+#' @param legendposition legend position
 
-theme_bors<- function(base_size=2.5) {
+theme_bors<- function(base_size=2.5, plotbq="#1e1e1e", legendposition="none") {
   
    theme_minimal()+
     theme(#panel.background = element_rect(fill = "#313130"#, color = "transparent"),
-      plot.background = element_rect(fill="#1e1e1e"),
+      plot.background = element_rect(fill=plotbq),
       strip.text = element_text(color="white", face = "bold", size=10),
       panel.grid = element_line(color = "#333333", size = 0.2),        
       panel.grid.major = element_line(color = "#333333",  size = 0.2),
@@ -17,7 +19,7 @@ theme_bors<- function(base_size=2.5) {
       line = element_line(color = "#e0e0e0"),
       #axis.ticks = element_line(color = "#e0e0e0"),
       axis.ticks = element_blank(),
-      
+      legend.position=legendposition,
       title = element_text(color = "white"),
       plot.title = element_text(color = "white")
       

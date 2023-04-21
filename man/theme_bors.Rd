@@ -4,10 +4,14 @@
 \alias{theme_bors}
 \title{theme_bors}
 \usage{
-theme_bors(base_size = 2.5)
+theme_bors(base_size = 2.5, plotbq = "#1e1e1e", legendposition = "none")
 }
 \arguments{
 \item{base_size}{base_size}
+
+\item{plotbq}{plot background color}
+
+\item{legendposition}{legend position}
 }
 \value{
 A theme element
