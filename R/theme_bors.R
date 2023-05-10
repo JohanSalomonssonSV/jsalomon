@@ -10,7 +10,7 @@ theme_bors<- function(base_size=2.5, plotbq="#1e1e1e", legendposition="none") {
   
    theme_minimal()+
     theme(#panel.background = element_rect(fill = "#313130"#, color = "transparent"),
-      plot.background = element_rect(fill=plotbq),
+      plot.background = element_rect(fill=plotbq, color=plotbq),
       strip.text = element_text(color="white", face = "bold", size=10),
       panel.grid = element_line(color = "#333333", size = 0.2),        
       panel.grid.major = element_line(color = "#333333",  size = 0.2),
