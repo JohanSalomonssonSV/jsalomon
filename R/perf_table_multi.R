@@ -16,10 +16,12 @@ perf_table_multi<-function(country="america"){
   }
   if (country=="nordic"){
     screen_data<-purrr::map2_dfr(c("sweden", 
+                                   "sweden", 
                             "denmark",
                             "norway", 
                             "finland"),
                           c("OMXSTO",
+                            "NGM",
                             "OMXCOP",
                             "OSL",
                             "OMXHEX"), 
