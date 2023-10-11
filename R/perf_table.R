@@ -50,6 +50,7 @@ z<-get_performance_table()
 z<-jsalomon::clean_TVdata(z)
 
 names(z)[3]<-"name"
+z$name<- as.character(z$name)
 return(z)
 
 }
