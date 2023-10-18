@@ -51,6 +51,9 @@ z<-jsalomon::clean_TVdata(z)
 
 names(z)[3]<-"name"
 z$name<- as.character(z$name)
+z$industry<- as.character(z$industry)
+z$sector<- as.character(z$sector)
+z$country<- as.character(z$country)
 return(z)
 
 }
