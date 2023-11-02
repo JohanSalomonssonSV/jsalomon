@@ -6,7 +6,8 @@
 #' @param plotbq plot background color
 #' @param legendposition legend position
 
-theme_bors<- function(base_size=2.5, plotbq="#1e1e1e", legendposition="none") {
+theme_bors<- function(base_size=2.5, plotbq="#040926",#"#1e1e1e", 
+                      legendposition="none") {
   
    theme_minimal()+
     theme(#panel.background = element_rect(fill = "#313130"#, color = "transparent"),
