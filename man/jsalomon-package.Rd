@@ -4,9 +4,9 @@
 \name{jsalomon-package}
 \alias{jsalomon}
 \alias{jsalomon-package}
-\title{jsalomon: What the Package Does (One Line, Title Case)}
+\title{jsalomon: Market analysis}
 \description{
-What the package does (one paragraph).
+This is a personal package for trading and market analysis.
 }
 \author{
 \strong{Maintainer}: First Last \email{first.last@example.com} (\href{https://orcid.org/YOUR-ORCID-ID}{ORCID})
